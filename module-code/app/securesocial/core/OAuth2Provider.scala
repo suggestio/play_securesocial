@@ -24,6 +24,7 @@ import play.api.libs.json.{ JsError, JsSuccess, JsValue, Json }
 import play.api.libs.ws.WSResponse
 import play.api.mvc._
 import securesocial.core.services.{ CacheService, HttpService, RoutesService }
+import securesocial.util.LoggerImpl
 
 import scala.collection.JavaConversions._
 import scala.concurrent.{ ExecutionContext, Future }
@@ -61,12 +62,13 @@ object OAuth2Client {
 /**
  * Base class for all OAuth2 providers
  */
-abstract class OAuth2Provider(routesService: RoutesService,
-    client: OAuth2Client,
-    cacheService: CacheService) extends IdentityProvider with ApiSupport {
-  protected val logger = play.api.Logger(this.getClass.getName)
+trait OAuth2Provider extends IdentityProvider with ApiSupport with LoggerImpl {
 
-  val settings = client.settings
+  def routesService: RoutesService
+  def client: OAuth2Client
+  def cacheService: CacheService
+
+  def settings = client.settings
   def authMethod = AuthenticationMethod.OAuth2
 
   private def getAccessToken[A](code: String)(implicit request: Request[A], ec: ExecutionContext): Future[OAuth2Info] = {
@@ -167,17 +169,17 @@ abstract class OAuth2Provider(routesService: RoutesService,
   /**
    * A Reads instance for the OAuth2Info case class
    */
-  implicit val OAuth2InfoReads = Json.reads[OAuth2Info]
+  implicit def OAuth2InfoReads = Json.reads[OAuth2Info]
 
   /**
    * A Reads instance for the LoginJson case class
    */
-  implicit val LoginJsonReads = Json.reads[LoginJson]
+  implicit def LoginJsonReads = Json.reads[LoginJson]
 
   /**
    * The error returned for malformed requests
    */
-  val malformedJson = Json.obj("error" -> "Malformed json").toString()
+  def malformedJson = Json.obj("error" -> "Malformed json").toString()
 
   def authenticateForApi(implicit request: Request[AnyContent]): Future[AuthenticationResult] = {
     import scala.concurrent.ExecutionContext.Implicits.global
@@ -237,9 +239,9 @@ object OAuth2Settings {
     val propertyKey = s"securesocial.$id."
 
     val result = for {
-      authorizationUrl <- loadProperty(id, OAuth2Settings.AuthorizationUrl);
-      accessToken <- loadProperty(id, OAuth2Settings.AccessTokenUrl);
-      clientId <- loadProperty(id, OAuth2Settings.ClientId);
+      authorizationUrl <- loadProperty(id, OAuth2Settings.AuthorizationUrl)
+      accessToken <- loadProperty(id, OAuth2Settings.AccessTokenUrl)
+      clientId <- loadProperty(id, OAuth2Settings.ClientId)
       clientSecret <- loadProperty(id, OAuth2Settings.ClientSecret)
     } yield {
       val config = Play.current.configuration

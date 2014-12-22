@@ -23,11 +23,11 @@ import concurrent.Future
 /**
  * Base class for all Identity Providers.
  */
-abstract class IdentityProvider {
+trait IdentityProvider {
   /**
    * The id for this provider.
    */
-  val id: String
+  def id: String
 
   /**
    * Subclasses need to implement this to specify the authentication method

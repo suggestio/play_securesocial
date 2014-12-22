@@ -23,12 +23,11 @@ import scala.concurrent.Future
 
 /**
  * A Foursquare provider
- *
  */
-class FoursquareProvider(routesService: RoutesService,
-  cacheService: CacheService,
-  client: OAuth2Client)
-    extends OAuth2Provider(routesService, client, cacheService) {
+
+object FoursquareProvider {
+  val Foursquare = "foursquare"
+
   val GetAuthenticatedUser = "https://api.foursquare.com/v2/users/self?v=20140404oauth_token=%s"
   val AccessToken = "access_token"
   val TokenType = "token_type"
@@ -44,7 +43,16 @@ class FoursquareProvider(routesService: RoutesService,
   val Prefix = "prefix"
   val Suffix = "suffix"
 
-  override val id = FoursquareProvider.Foursquare
+}
+
+import FoursquareProvider._
+
+case class FoursquareProvider(routesService: RoutesService,
+  cacheService: CacheService,
+  client: OAuth2Client)
+    extends OAuth2Provider {
+
+  override def id = FoursquareProvider.Foursquare
 
   def fillProfile(info: OAuth2Info): Future[BasicProfile] = {
     import scala.concurrent.ExecutionContext.Implicits.global
@@ -72,6 +80,3 @@ class FoursquareProvider(routesService: RoutesService,
   }
 }
 
-object FoursquareProvider {
-  val Foursquare = "foursquare"
-}

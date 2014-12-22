@@ -24,12 +24,11 @@ import scala.concurrent.{ ExecutionContext, Future }
 
 /**
  * A Weibo provider
- *
  */
-class WeiboProvider(routesService: RoutesService,
-  cacheService: CacheService,
-  client: OAuth2Client)
-    extends OAuth2Provider(routesService, client, cacheService) {
+
+object WeiboProvider {
+  val Weibo = "weibo"
+
   val GetAuthenticatedUser = "https://api.weibo.com/2/users/show.json?uid=%s&access_token=%s"
   val AccessToken = "access_token"
   val Message = "error"
@@ -40,7 +39,16 @@ class WeiboProvider(routesService: RoutesService,
   val GetUserEmail = "https://api.weibo.com/2/account/profile/email.json?access_token=%s"
   val Email = "email"
 
-  override val id = WeiboProvider.Weibo
+}
+
+import WeiboProvider._
+
+case class WeiboProvider(routesService: RoutesService,
+  cacheService: CacheService,
+  client: OAuth2Client)
+    extends OAuth2Provider {
+
+  override def id = WeiboProvider.Weibo
 
   /**
    *
@@ -70,9 +78,6 @@ class WeiboProvider(routesService: RoutesService,
    */
   def fillProfile(info: OAuth2Info): Future[BasicProfile] = {
     import scala.concurrent.ExecutionContext.Implicits.global
-    import play.api.Play.current
-    val accessToken = info.accessToken
-
     val weiboUserId = info.tokenType.getOrElse {
       logger.error("[securesocial] Can't found weiboUserId")
       throw new AuthenticationException()
@@ -115,8 +120,5 @@ class WeiboProvider(routesService: RoutesService,
         None
     }
   }
-}
 
-object WeiboProvider {
-  val Weibo = "weibo"
 }

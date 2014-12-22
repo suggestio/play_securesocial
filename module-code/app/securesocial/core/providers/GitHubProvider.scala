@@ -24,12 +24,11 @@ import scala.concurrent.Future
 
 /**
  * A GitHub provider
- *
  */
-class GitHubProvider(routesService: RoutesService,
-  cacheService: CacheService,
-  client: OAuth2Client)
-    extends OAuth2Provider(routesService, client, cacheService) {
+
+object GitHubProvider {
+  val GitHub = "github"
+
   val GetAuthenticatedUser = "https://api.github.com/user?access_token=%s"
   val AccessToken = "access_token"
   val TokenType = "token_type"
@@ -39,7 +38,16 @@ class GitHubProvider(routesService: RoutesService,
   val AvatarUrl = "avatar_url"
   val Email = "email"
 
-  override val id = GitHubProvider.GitHub
+}
+
+import GitHubProvider._
+
+case class GitHubProvider(routesService: RoutesService,
+  cacheService: CacheService,
+  client: OAuth2Client)
+    extends OAuth2Provider {
+
+  override def id = GitHubProvider.GitHub
 
   override protected def buildInfo(response: WSResponse): OAuth2Info = {
     val values: Map[String, String] = response.body.split("&").map(_.split("=")).withFilter(_.size == 2)
@@ -80,6 +88,3 @@ class GitHubProvider(routesService: RoutesService,
   }
 }
 
-object GitHubProvider {
-  val GitHub = "github"
-}

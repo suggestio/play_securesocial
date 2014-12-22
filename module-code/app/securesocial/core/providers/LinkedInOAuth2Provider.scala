@@ -17,7 +17,6 @@
 package securesocial.core.providers
 
 import securesocial.core._
-import securesocial.core.providers.LinkedInOAuth2Provider._
 import securesocial.core.services.{ CacheService, RoutesService }
 
 import scala.concurrent.Future
@@ -25,11 +24,29 @@ import scala.concurrent.Future
 /**
  * A LinkedIn Provider (OAuth2)
  */
-class LinkedInOAuth2Provider(routesService: RoutesService,
+object LinkedInOAuth2Provider {
+  val Api = "https://api.linkedin.com/v1/people/~:(id,first-name,last-name,formatted-name,picture-url,email-address)?format=json&oauth2_access_token="
+  val LinkedIn = "linkedin"
+  val ErrorCode = "errorCode"
+  val Message = "message"
+  val RequestId = "requestId"
+  val Timestamp = "timestamp"
+  val Id = "id"
+  val FirstName = "firstName"
+  val LastName = "lastName"
+  val FormattedName = "formattedName"
+  val PictureUrl = "pictureUrl"
+  val EmailAddress = "emailAddress"
+}
+
+import LinkedInOAuth2Provider._
+
+case class LinkedInOAuth2Provider(routesService: RoutesService,
   cacheService: CacheService,
   client: OAuth2Client)
-    extends OAuth2Provider(routesService, client, cacheService) {
-  override val id = LinkedInOAuth2Provider.LinkedIn
+    extends OAuth2Provider {
+
+  override def id = LinkedInOAuth2Provider.LinkedIn
 
   override def fillProfile(info: OAuth2Info): Future[BasicProfile] = {
     import scala.concurrent.ExecutionContext.Implicits.global
@@ -64,17 +81,3 @@ class LinkedInOAuth2Provider(routesService: RoutesService,
   }
 }
 
-object LinkedInOAuth2Provider {
-  val Api = "https://api.linkedin.com/v1/people/~:(id,first-name,last-name,formatted-name,picture-url,email-address)?format=json&oauth2_access_token="
-  val LinkedIn = "linkedin"
-  val ErrorCode = "errorCode"
-  val Message = "message"
-  val RequestId = "requestId"
-  val Timestamp = "timestamp"
-  val Id = "id"
-  val FirstName = "firstName"
-  val LastName = "lastName"
-  val FormattedName = "formattedName"
-  val PictureUrl = "pictureUrl"
-  val EmailAddress = "emailAddress"
-}

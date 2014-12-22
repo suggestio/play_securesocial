@@ -28,12 +28,12 @@ import scala.concurrent.Future
 /**
  * A Dropbox Provider (OAuth2)
  */
-class DropboxProvider(routesService: RoutesService,
+case class DropboxProvider(routesService: RoutesService,
   cacheService: CacheService,
   client: OAuth2Client)
-    extends OAuth2Provider(routesService, client, cacheService) {
-  private val Logger = play.api.Logger("securesocial.core.providers.DropboxProvider")
-  override val id = DropboxProvider.Dropbox
+    extends OAuth2Provider {
+
+  override def id = DropboxProvider.Dropbox
 
   override def fillProfile(info: OAuth2Info): Future[BasicProfile] = {
     import scala.concurrent.ExecutionContext.Implicits.global
@@ -48,12 +48,12 @@ class DropboxProvider(routesService: RoutesService,
           val fullName = (data \ FormattedName).asOpt[String]
           BasicProfile(id, userId, None, None, fullName, None, None, authMethod, None, Some(info))
         case _ =>
-          Logger.error("[securesocial] Dropbox account info request returned error: " + response.body)
+          logger.error("[securesocial] Dropbox account info request returned error: " + response.body)
           throw new AuthenticationException()
       }
     } recover {
       case e =>
-        Logger.error("[securesocial] error retrieving profile information from Dropbox", e)
+        logger.error("[securesocial] error retrieving profile information from Dropbox", e)
         throw new AuthenticationException()
     }
   }

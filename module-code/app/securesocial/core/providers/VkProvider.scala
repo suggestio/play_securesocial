@@ -9,10 +9,11 @@ import scala.concurrent.Future
 /**
  * A Vk provider
  */
-class VkProvider(routesService: RoutesService,
-  cacheService: CacheService,
-  client: OAuth2Client)
-    extends OAuth2Provider(routesService, client, cacheService) {
+
+object VkProvider {
+
+  val Vk = "vk"
+
   val GetProfilesApi = "https://api.vk.com/method/getProfiles?fields=uid,first_name,last_name,photo&access_token="
   val Response = "response"
   val Id = "uid"
@@ -23,7 +24,16 @@ class VkProvider(routesService: RoutesService,
   val ErrorCode = "error_code"
   val ErrorMessage = "error_msg"
 
-  override val id = VkProvider.Vk
+}
+
+import VkProvider._
+
+case class VkProvider(routesService: RoutesService,
+  cacheService: CacheService,
+  client: OAuth2Client)
+    extends OAuth2Provider {
+
+  override def id = VkProvider.Vk
 
   def fillProfile(info: OAuth2Info): Future[BasicProfile] = {
     import scala.concurrent.ExecutionContext.Implicits.global
@@ -54,6 +64,3 @@ class VkProvider(routesService: RoutesService,
   }
 }
 
-object VkProvider {
-  val Vk = "vk"
-}

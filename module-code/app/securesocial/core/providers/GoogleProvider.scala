@@ -25,10 +25,10 @@ import scala.concurrent.Future
 /**
  * A Google OAuth2 Provider
  */
-class GoogleProvider(routesService: RoutesService,
-  cacheService: CacheService,
-  client: OAuth2Client)
-    extends OAuth2Provider(routesService, client, cacheService) {
+
+object GoogleProvider {
+  val Google = "google"
+
   val UserInfoApi = "https://www.googleapis.com/plus/v1/people/me?fields=id,name,displayName,image,emails&access_token="
   val Error = "error"
   val Message = "message"
@@ -45,7 +45,16 @@ class GoogleProvider(routesService: RoutesService,
   val EmailType = "type"
   val Account = "account"
 
-  override val id = GoogleProvider.Google
+}
+
+import GoogleProvider._
+
+case class GoogleProvider(routesService: RoutesService,
+  cacheService: CacheService,
+  client: OAuth2Client)
+    extends OAuth2Provider {
+
+  override def id = GoogleProvider.Google
 
   def fillProfile(info: OAuth2Info): Future[BasicProfile] = {
     import scala.concurrent.ExecutionContext.Implicits.global
@@ -76,6 +85,3 @@ class GoogleProvider(routesService: RoutesService,
   }
 }
 
-object GoogleProvider {
-  val Google = "google"
-}

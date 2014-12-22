@@ -26,19 +26,19 @@ organizationName := "SecureSocial"
 
 organizationHomepage := Some(new URL("http://www.securesocial.ws"))
 
-publishMavenStyle := true
+//pomIncludeRepository := { _ => false }
 
-publishArtifact in Test := false
+//publishMavenStyle := true
 
-pomIncludeRepository := { _ => false }
+//publishArtifact in Test := false
 
-publishTo := {
+/*publishTo := {
   val nexus = "https://oss.sonatype.org/"
   if (version.value.trim.endsWith("SNAPSHOT"))
     Some("snapshots" at nexus + "content/repositories/snapshots")
   else
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}
+}*/
 
 startYear := Some(2012)
 

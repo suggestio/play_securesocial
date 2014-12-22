@@ -23,12 +23,11 @@ import scala.concurrent.Future
 
 /**
  * An Instagram provider
- *
  */
-class InstagramProvider(routesService: RoutesService,
-  cacheService: CacheService,
-  client: OAuth2Client)
-    extends OAuth2Provider(routesService, client, cacheService) {
+
+object InstagramProvider {
+  val Instagram = "instagram"
+
   val GetAuthenticatedUser = "https://api.instagram.com/v1/users/self?access_token=%s"
   val AccessToken = "access_token"
   val TokenType = "token_type"
@@ -38,7 +37,16 @@ class InstagramProvider(routesService: RoutesService,
   val ProfilePic = "profile_picture"
   val Id = "id"
 
-  override val id = InstagramProvider.Instagram
+}
+
+import InstagramProvider._
+
+case class InstagramProvider(routesService: RoutesService,
+  cacheService: CacheService,
+  client: OAuth2Client)
+    extends OAuth2Provider {
+
+  override def id = InstagramProvider.Instagram
 
   def fillProfile(info: OAuth2Info): Future[BasicProfile] = {
     import scala.concurrent.ExecutionContext.Implicits.global
@@ -63,6 +71,3 @@ class InstagramProvider(routesService: RoutesService,
   }
 }
 
-object InstagramProvider {
-  val Instagram = "instagram"
-}
