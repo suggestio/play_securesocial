@@ -16,6 +16,7 @@
  */
 package securesocial.core.providers.utils
 
+import play.api.libs.mailer.{ MailerPlugin, Email }
 import securesocial.core.BasicProfile
 import play.api.Play
 import securesocial.controllers.MailTemplates
@@ -88,7 +89,6 @@ object Mailer {
     }
 
     override def sendEmail(subject: String, recipient: String, body: (Option[Txt], Option[Html])) {
-      import com.typesafe.plugin._
       import scala.concurrent.duration._
       import play.api.libs.concurrent.Execution.Implicits._
 
@@ -96,12 +96,14 @@ object Mailer {
       logger.debug(s"[securesocial] mail = [$body]")
 
       Akka.system.scheduler.scheduleOnce(1.seconds) {
-        val mail = use[MailerPlugin].email
-        mail.setSubject(subject)
-        mail.setRecipient(recipient)
-        mail.setFrom(fromAddress)
-        // the mailer plugin handles null / empty string gracefully
-        mail.send(body._1.map(_.body).getOrElse(""), body._2.map(_.body).getOrElse(""))
+        val mail = Email(
+          subject = subject,
+          to = Seq(recipient),
+          from = fromAddress,
+          bodyText = body._1.map(_.body),
+          bodyHtml = body._2.map(_.body)
+        )
+        MailerPlugin.send(mail)
       }
     }
   }

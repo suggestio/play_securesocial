@@ -7,8 +7,8 @@ scalaVersion := Common.scalaVersion
 libraryDependencies ++= Seq(
   cache,
   ws,
-  "com.typesafe.play.plugins" %% "play-plugins-util" % "2.3.0",
-  "com.typesafe.play.plugins" %% "play-plugins-mailer" % "2.3.0",
+  //"com.typesafe.play.plugins" %% "play-plugins-util" % "2.3.0",
+  "com.typesafe.play.plugins" %% "play-plugins-mailer" % "2.4.0-M2-SNAPSHOT",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "org.specs2" %% "specs2" % "2.3.12" % "test",
   "org.mockito" % "mockito-all" % "1.9.5" % "test"

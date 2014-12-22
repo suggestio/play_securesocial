@@ -1,3 +1,5 @@
 package securesocial.controllers
 
-object Assets extends controllers.AssetsBuilder
+import play.api.http.LazyHttpErrorHandler
+
+object Assets extends controllers.AssetsBuilder(LazyHttpErrorHandler)
