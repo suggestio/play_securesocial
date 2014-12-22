@@ -18,6 +18,7 @@ package securesocial.core
 
 import play.api.mvc.{ Result, AnyContent, Request }
 import play.api.Play
+import securesocial.util.LazyLoggerImpl
 import concurrent.Future
 
 /**
@@ -51,8 +52,8 @@ trait IdentityProvider {
   def authenticate()(implicit request: Request[AnyContent]): Future[AuthenticationResult]
 }
 
-object IdentityProvider {
-  private val logger = play.api.Logger("securesocial.core.IdentityProvider")
+object IdentityProvider extends LazyLoggerImpl {
+
   val SessionId = "sid"
 
   // todo: do I want this here?
@@ -89,6 +90,7 @@ object IdentityProvider {
     throw new RuntimeException(msg)
   }
 }
+
 
 /**
  * An object that represents the different results of the authentication flow
