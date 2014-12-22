@@ -26,11 +26,11 @@ import scala.concurrent.Future
 /**
  * A Facebook Provider
  */
-case class FacebookProvider(routesService: RoutesService,
-  cacheService: CacheService,
-  client: OAuth2Client)
-    extends OAuth2Provider {
-  val MeApi = "https://graph.facebook.com/me?fields=name,first_name,last_name,picture,email&return_ssl_resources=1&access_token="
+
+object FacebookProvider {
+  val Facebook = "facebook"
+
+  val MeApi = "https://graph.facebook.com/me?fields=name,first_name,last_name,picture.type(large),email&return_ssl_resources=1&access_token="
   val Error = "error"
   val Message = "message"
   val Type = "type"
@@ -45,7 +45,16 @@ case class FacebookProvider(routesService: RoutesService,
   val Data = "data"
   val Url = "url"
 
-  override val id = FacebookProvider.Facebook
+}
+
+import FacebookProvider._
+
+case class FacebookProvider(routesService: RoutesService,
+  cacheService: CacheService,
+  client: OAuth2Client)
+    extends OAuth2Provider {
+
+  override def id = FacebookProvider.Facebook
 
   // facebook does not follow the OAuth2 spec :-\
   override protected def buildInfo(response: WSResponse): OAuth2Info = {
@@ -90,6 +99,3 @@ case class FacebookProvider(routesService: RoutesService,
   }
 }
 
-object FacebookProvider {
-  val Facebook = "facebook"
-}

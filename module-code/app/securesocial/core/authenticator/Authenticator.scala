@@ -130,7 +130,7 @@ trait Authenticator[U] {
  * @tparam U the user object type
  */
 trait AuthenticatorBuilder[U] {
-  val id: String
+  def id: String
 
   /**
    * Parses a request and returns an optional authenticator instance

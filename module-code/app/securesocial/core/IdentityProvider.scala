@@ -91,7 +91,6 @@ object IdentityProvider extends LazyLoggerImpl {
   }
 }
 
-
 /**
  * An object that represents the different results of the authentication flow
  */

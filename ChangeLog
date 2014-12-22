@@ -1,4 +1,20 @@
 master  -
+		- Pull #503: request fixing hardcoded HTTP header name in fromRequest (thanks @jglodek)
+		- Fixed signup and password change errors in the Scala sample app
+		- Added CSRF support 
+		- Fixed #435: i18n does not work
+		- Fixed #471: Continue with authentication if AvatarService is None (thanks @cemcatik)
+		- Fixed #484: missing public folder
+		- Fixed #501: Requests get redirected to wrong routes (Java) 
+		- Pull request #441: Update user-service.md (thanks @salaj1986)
+		- Pull request #495: disable generateRefReverseRouter (thanks @amertum)
+		- Pull request #461: Use large version of Facebook profile picture (thanks @nguyentruongtho)
+		- Fixed #468: Redirect loop when canceling Facebook Login Dialog
+		- Added crossbuild and upgraded to Play 2.3.7
+		- Fixed #494: source and target versions are 1.6 now
+		- Fixed #493: BoxedUnit cannot be cast to Authenticator (thanks @amertum)
+		- Upgraded to Play 2.3.5 and fixed most compiler warnings
+		- Fixed: CacheService.Default was ignoring ttl
 		- Switched back to Play 2.3.2 (problems publishing signed artifacts see https://github.com/sbt/sbt-pgp/issues/59)
 		- Added scalariform
 		- Separate creation and storage of mail tokens (thanks @normenmueller)

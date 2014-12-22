@@ -128,7 +128,7 @@ case class CookieAuthenticator[U](id: String, user: U, expirationDate: DateTime,
  * @tparam U the user object type
  */
 class CookieAuthenticatorBuilder[U](store: AuthenticatorStore[CookieAuthenticator[U]], generator: IdGenerator) extends AuthenticatorBuilder[U] {
-  val id = CookieAuthenticator.Id
+  def id = CookieAuthenticator.Id
 
   /**
    * Creates an instance of a CookieAuthenticator from the http request

@@ -16,7 +16,7 @@
  */
 package securesocial.core.providers
 
-import play.api.libs.ws.{ WSResponse, WS }
+import play.api.libs.ws.{ WS, WSResponse }
 import securesocial.core._
 import securesocial.core.services.{ CacheService, RoutesService }
 
@@ -78,12 +78,13 @@ case class WeiboProvider(routesService: RoutesService,
    */
   def fillProfile(info: OAuth2Info): Future[BasicProfile] = {
     import scala.concurrent.ExecutionContext.Implicits.global
+    val accessToken = info.accessToken
     val weiboUserId = info.tokenType.getOrElse {
       logger.error("[securesocial] Can't found weiboUserId")
       throw new AuthenticationException()
     }
 
-    client.retrieveProfile(GetAuthenticatedUser.format(weiboUserId, info.accessToken)).flatMap { me =>
+    client.retrieveProfile(GetAuthenticatedUser.format(weiboUserId, accessToken)).flatMap { me =>
       (me \ Message).asOpt[String] match {
         case Some(msg) =>
           logger.error("[securesocial] error retrieving profile information from Weibo. Message = %s".format(msg))
@@ -92,7 +93,7 @@ case class WeiboProvider(routesService: RoutesService,
           val userId = (me \ Id).as[String]
           val displayName = (me \ Name).asOpt[String]
           val avatarUrl = (me \ AvatarUrl).asOpt[String]
-          getEmail(info.accessToken).map { email =>
+          getEmail(accessToken).map { email =>
             BasicProfile(id, userId, None, None, displayName, email, avatarUrl, authMethod, None, Some(info))
           }
       }

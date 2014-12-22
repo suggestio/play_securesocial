@@ -17,11 +17,10 @@
 package securesocial.core.authenticator
 
 import org.joda.time.DateTime
-import play.api.mvc._
-import scala.concurrent.{ ExecutionContext, Future }
 import play.api.Play
-import scala.Some
-import play.api.mvc.Result
+import play.api.mvc._
+
+import scala.concurrent.Future
 
 /**
  * A http header based authenticator. This authenticator works using the X-Auth-Token header in the http request
@@ -44,8 +43,8 @@ case class HttpHeaderAuthenticator[U](id: String, user: U, expirationDate: DateT
     creationDate: DateTime,
     @transient store: AuthenticatorStore[HttpHeaderAuthenticator[U]]) extends StoreBackedAuthenticator[U, HttpHeaderAuthenticator[U]] {
 
-  override val idleTimeoutInMinutes = HttpHeaderAuthenticator.idleTimeout
-  override val absoluteTimeoutInSeconds = HttpHeaderAuthenticator.absoluteTimeoutInSeconds
+  override def idleTimeoutInMinutes = HttpHeaderAuthenticator.idleTimeout
+  override def absoluteTimeoutInSeconds = HttpHeaderAuthenticator.absoluteTimeoutInSeconds
   /**
    * Returns a copy of this authenticator with the given last used time
    *
@@ -81,7 +80,7 @@ case class HttpHeaderAuthenticator[U](id: String, user: U, expirationDate: DateT
  * @tparam U the user object type
  */
 class HttpHeaderAuthenticatorBuilder[U](store: AuthenticatorStore[HttpHeaderAuthenticator[U]], generator: IdGenerator) extends AuthenticatorBuilder[U] {
-  val id = HttpHeaderAuthenticator.Id
+  def id = HttpHeaderAuthenticator.Id
 
   /**
    * Creates an instance of a HttpHeaderAuthenticator from the http request
@@ -90,8 +89,8 @@ class HttpHeaderAuthenticatorBuilder[U](store: AuthenticatorStore[HttpHeaderAuth
    * @return an optional HttpHeaderAuthenticator instance.
    */
   override def fromRequest(request: RequestHeader): Future[Option[HttpHeaderAuthenticator[U]]] = {
-    import ExecutionContext.Implicits.global
-    request.headers.get("X-Auth-Token") match {
+    import scala.concurrent.ExecutionContext.Implicits.global
+    request.headers.get(HttpHeaderAuthenticator.headerName) match {
       case Some(value) => store.find(value).map { retrieved =>
         retrieved.map { _.copy(store = store) }
       }
@@ -106,7 +105,7 @@ class HttpHeaderAuthenticatorBuilder[U](store: AuthenticatorStore[HttpHeaderAuth
    * @return a HttpHeaderAuthenticator instance.
    */
   override def fromUser(user: U): Future[HttpHeaderAuthenticator[U]] = {
-    import ExecutionContext.Implicits.global
+    import scala.concurrent.ExecutionContext.Implicits.global
     generator.generate.flatMap {
       id =>
         val now = DateTime.now()
@@ -122,14 +121,14 @@ object HttpHeaderAuthenticator {
   // todo: create settings object
 
   val Id = "token"
-  val HeaderNameKey = "securesocial.auth-header.name"
+  def HeaderNameKey = "securesocial.auth-header.name"
 
   // default values
-  val DefaultHeaderName = "X-Auth-Token"
+  def DefaultHeaderName = "X-Auth-Token"
 
   lazy val headerName = Play.application.configuration.getString(HeaderNameKey).getOrElse(DefaultHeaderName)
   // using the same properties than the CookieBased authenticator for now.
-  lazy val idleTimeout = CookieAuthenticator.idleTimeout
-  lazy val absoluteTimeout = CookieAuthenticator.absoluteTimeout
-  lazy val absoluteTimeoutInSeconds = CookieAuthenticator.absoluteTimeoutInSeconds
+  def idleTimeout = CookieAuthenticator.idleTimeout
+  def absoluteTimeout = CookieAuthenticator.absoluteTimeout
+  def absoluteTimeoutInSeconds = CookieAuthenticator.absoluteTimeoutInSeconds
 }

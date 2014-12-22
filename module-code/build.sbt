@@ -1,14 +1,22 @@
+import play.PlayImport.PlayKeys._
+import play.sbtplugin.routes.RoutesKeys._
+
 name := "SecureSocial"
 
 version := Common.version
 
 scalaVersion := Common.scalaVersion
 
+crossScalaVersions := Seq("2.11.1", "2.10.4")
+
+
+generateRefReverseRouter := false
+
 libraryDependencies ++= Seq(
   cache,
   ws,
-  //"com.typesafe.play.plugins" %% "play-plugins-util" % "2.3.0",
   "com.typesafe.play.plugins" %% "play-plugins-mailer" % "2.4.0-M2-SNAPSHOT",
+  "com.typesafe.play" %% "filters-helpers" % "2.4.0-M2",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "org.specs2" %% "specs2" % "2.3.12" % "test",
   "org.mockito" % "mockito-all" % "1.9.5" % "test"
@@ -64,5 +72,9 @@ pomExtra := (
   </developers>
 )
 
-scalacOptions := Seq("-feature", "-deprecation")
+scalacOptions := Seq("-encoding", "UTF-8", "-Xlint", "-deprecation", "-unchecked", "-feature")
 
+// not adding -Xlint:unchecked for now, will do it once I improve the Java API
+javacOptions ++= Seq("-source", "1.6", "-target", "1.6", "-encoding", "UTF-8",  "-Xlint:-options")
+
+packagedArtifacts += ((artifact in playPackageAssets).value -> playPackageAssets.value)

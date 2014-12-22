@@ -17,6 +17,7 @@
 package securesocial.core.authenticator
 
 import org.joda.time.DateTime
+import securesocial.util.LoggerImpl
 import scala.annotation.meta.getter
 import scala.concurrent.{ ExecutionContext, Future }
 import play.api.mvc.Result
@@ -27,9 +28,7 @@ import play.api.mvc.Result
  * @tparam U the user object type
  * @tparam T the authenticator type
  */
-trait StoreBackedAuthenticator[U, T <: Authenticator[U]] extends Authenticator[U] {
-  @transient
-  protected val logger = play.api.Logger(this.getClass.getName)
+trait StoreBackedAuthenticator[U, T <: Authenticator[U]] extends Authenticator[U] with LoggerImpl {
 
   @(transient @getter)
   val store: AuthenticatorStore[T]
@@ -37,12 +36,12 @@ trait StoreBackedAuthenticator[U, T <: Authenticator[U]] extends Authenticator[U
   /**
    * The time an authenticator is allowed to live in the store
    */
-  val absoluteTimeoutInSeconds: Int
+  def absoluteTimeoutInSeconds: Int
 
   /**
    * The inactivity period after which an authenticator is considered invalid
    */
-  val idleTimeoutInMinutes: Int
+  def idleTimeoutInMinutes: Int
 
   /**
    * Returns a copy of this authenticator with the given last used time

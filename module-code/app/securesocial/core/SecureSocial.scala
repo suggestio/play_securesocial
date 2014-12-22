@@ -25,7 +25,6 @@ import play.twirl.api.Html
 
 import securesocial.core.utils._
 import securesocial.core.authenticator._
-import scala.Some
 import play.api.mvc.Result
 
 /**
@@ -36,14 +35,9 @@ import play.api.mvc.Result
 trait SecureSocial[U] extends Controller {
   implicit val env: RuntimeEnvironment[U]
 
-  /**
-   * A Forbidden response for ajax clients
-   * @param request the current request
-   * @tparam A
-   * @return
-   */
-  protected val notAuthenticatedJson = Unauthorized(Json.toJson(Map("error" -> "Credentials required"))).as(JSON)
-  protected val notAuthorizedJson = Forbidden(Json.toJson(Map("error" -> "Not authorized"))).as(JSON)
+  /** A Forbidden response for ajax clients */
+  protected def notAuthenticatedJson = Unauthorized(Json.toJson(Map("error" -> "Credentials required"))).as(JSON)
+  protected def notAuthorizedJson = Forbidden(Json.toJson(Map("error" -> "Not authorized"))).as(JSON)
   protected def notAuthorizedPage()(implicit request: RequestHeader): Html = securesocial.views.html.notAuthorized()
 
   protected def notAuthenticatedResult[A](implicit request: Request[A]): Future[Result] = {
