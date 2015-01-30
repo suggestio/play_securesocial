@@ -71,7 +71,7 @@ trait OAuth2Provider extends IdentityProvider with ApiSupport with LoggerImpl {
   def settings = client.settings
   def authMethod = AuthenticationMethod.OAuth2
 
-  private def getAccessToken[A](code: String)(implicit request: Request[A], ec: ExecutionContext): Future[OAuth2Info] = {
+  protected def getAccessToken[A](code: String)(implicit request: Request[A], ec: ExecutionContext): Future[OAuth2Info] = {
     val callbackUrl = routesService.authenticationUrl(id)
     client.exchangeCodeForToken(code, callbackUrl, buildInfo)
       .recover {
