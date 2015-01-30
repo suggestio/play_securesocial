@@ -41,10 +41,10 @@ import scala.xml.Node
  *  - the access token response is delivered in XML (instead of JSON as
  *    specified in http://tools.ietf.org/html/rfc6749#section-5.1)
  */
-class ConcurProvider(routesService: RoutesService,
+case class ConcurProvider(routesService: RoutesService,
   cacheService: CacheService,
   client: OAuth2Client)
-    extends OAuth2Provider(routesService, client, cacheService) {
+    extends OAuth2Provider {
   /** formatter used to parse the expiration date returned from Concur */
   private val ExpirationDateFormatter = DateTimeFormat.forPattern("MM/dd/yyyy HH:mm:ss a")
 
